@@ -4,14 +4,16 @@ import 'package:get/get.dart';
 import 'package:merchant/domain/client/api_client.dart';
 import 'package:merchant/domain/client/event_service.dart';
 import 'package:merchant/domain/data/models/voucher_discount_model.dart';
+import 'package:merchant/domain/database/store_db.dart';
 import 'package:merchant/utils/dialog_util.dart';
 import 'package:merchant/utils/error_util.dart';
+import 'package:merchant/domain/data/models/store_model.dart';
 
 enum VoucherDateType { start, expiry }
 
 class CreateVoucherController extends GetxController {
   final ApiClient client = ApiClient();
-
+  final store = StoreModel().obs;
   VoucherDiscountModel? voucher;
 
   /// TEXT CONTROLLERS
@@ -29,7 +31,7 @@ class CreateVoucherController extends GetxController {
   final isActive = true.obs;
 
   /// CONSTANT
-  final String code = "DISC-001937-L1EP";
+  final String code = "DISC-";
   final String type = "discount";
   final bool isShow = true;
   final String system = "1";
@@ -41,7 +43,7 @@ class CreateVoucherController extends GetxController {
     super.onInit();
 
     voucher = Get.arguments?["voucher"];
-
+    store.value = StoreDB().currentStore() ?? StoreModel();
     if (voucher != null) {
       _fillData();
     }
@@ -80,7 +82,7 @@ class CreateVoucherController extends GetxController {
       "discountAmount": int.tryParse(discountController.text) ?? 0,
       "status": isActive.value ? "active" : "inactive",
       "isShow": isShow,
-      "system": system,
+      "system": store.value.system.isNotEmpty ? store.value.system[0] : ["1"],
     };
 
     try {
