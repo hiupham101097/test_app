@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:merchant/utils/screen_util_extensions.dart';
-import 'package:get/get.dart';
 import 'package:merchant/style/app_colors.dart';
 import 'package:merchant/style/app_text_style.dart';
 

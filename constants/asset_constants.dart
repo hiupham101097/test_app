@@ -85,4 +85,5 @@ class AssetConstants {
   static const String step4 = 'assets/images/step_4.png';
   static const String atmCard = 'assets/icons/atm_card.png';
   static const String lottieError = 'assets/lottie/faild_lottie.json';
+  static const String icVoucher = 'assets/icons/icVoucher.png';
 }

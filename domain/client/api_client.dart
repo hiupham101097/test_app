@@ -764,4 +764,55 @@ class ApiClient extends BaseClient {
       '$apiHostSso/api/v1/mobile/employ/check-existed?phoneOrEmail=$phoneOrEmail',
     );
   }
+
+  Future<Response> createVoucher({required Map<String, dynamic> data}) async {
+    return client.post(
+      '$apiHostPartner/api/v1/mobile/public/vouchers',
+      data: data,
+    );
+  }
+
+  Future<Response> fetchListVoucherDiscount({
+    int? limit = 20,
+    int? page = 1,
+    String? storeId,
+  }) async {
+    final query = <String, dynamic>{};
+
+    if (limit != null) {
+      query['pageSize'] = limit;
+    }
+
+    if (page != null) {
+      query['pageCurrent'] = page;
+    }
+
+    if (storeId != null) {
+      query['sortList'] = jsonEncode([
+        {
+          "key": "storeId",
+          "value": [storeId, null],
+        },
+      ]);
+    }
+
+    return client.get(
+      '$apiHostPartner/api/v1/mobile/public/vouchers',
+      queryParameters: query,
+    );
+  }
+
+  Future<Response> deleteVoucherDiscount({required String id}) async {
+    return client.delete('$apiHostPartner/api/v1/mobile/public/vouchers/$id');
+  }
+
+  Future<Response> updateVoucherDiscount({
+    required Map<String, dynamic> data,
+    required String id,
+  }) async {
+    return client.put(
+      '$apiHostPartner/api/v1/mobile/public/vouchers/$id',
+      data: data,
+    );
+  }
 }

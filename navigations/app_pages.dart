@@ -40,6 +40,10 @@ import 'package:merchant/features/use_voucher/use_voucher_binding.dart';
 import 'package:merchant/features/use_voucher/use_voucher_page.dart';
 import 'package:merchant/features/voucher/voucher_binding.dart';
 import 'package:merchant/features/voucher/voucher_page.dart';
+import 'package:merchant/features/voucher_discount/create_voucher/create_voucher_binding.dart';
+import 'package:merchant/features/voucher_discount/create_voucher/create_voucher_page.dart';
+import 'package:merchant/features/voucher_discount/voucher_discount_binding.dart';
+import 'package:merchant/features/voucher_discount/voucher_discount_page.dart';
 import 'package:merchant/features/wallet/add_bank/add_bank_binding.dart';
 import 'package:merchant/features/wallet/add_bank/add_bank_page.dart';
 import 'package:merchant/features/wallet/confirm_transaction/confirm_transaction_binding.dart';
@@ -333,6 +337,16 @@ class AppPages {
       name: Routes.infoStore,
       page: () => InfoStorePage(),
       binding: InfoStoreBinding(),
+    ),
+    GetPage(
+      name: Routes.createVoucher,
+      page: () => CreateVoucherPage(),
+      binding: CreateVoucherBinding(),
+    ),
+    GetPage(
+      name: Routes.voucherDiscount,
+      page: () => VoucherDiscountPage(),
+      binding: VoucherDiscountBinding(),
     ),
   ];
 }

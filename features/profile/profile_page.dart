@@ -255,6 +255,13 @@ class ProfilePage extends GetView<ProfileController> {
             },
           ),
           _buildItem(
+            "Tạo mã giảm giá",
+            AssetConstants.icVoucher,
+            onTap: () {
+              Get.toNamed(Routes.voucherDiscount);
+            },
+          ),
+          _buildItem(
             "setting_time".tr,
             AssetConstants.icTimer,
             onTap: () {

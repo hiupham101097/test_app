@@ -33,3 +33,7 @@ class PromotionEvent {}
 class StatisticsEvent {}
 
 class UpdateStoreEvent {}
+
+class CreateVoucherDiscountEvent {}
+
+class UpdateVoucherDiscountEvent {}

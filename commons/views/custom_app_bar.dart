@@ -1,11 +1,9 @@
-import 'dart:isolate';
 
 import 'package:merchant/utils/screen_util_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import '../../constants/asset_constants.dart';
 import '../../style/app_colors.dart';
 import '../../style/app_text_style.dart';
 

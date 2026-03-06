@@ -1,9 +1,7 @@
-import 'dart:io';
 
 import 'package:merchant/commons/views/app_button.dart';
 import 'package:merchant/commons/views/app_text_field.dart';
 import 'package:merchant/commons/views/cached_image.dart';
-import 'package:merchant/constants/asset_constants.dart';
 import 'package:merchant/domain/data/models/product_model.dart';
 import 'package:merchant/style/app_colors.dart';
 import 'package:merchant/style/app_text_style.dart';

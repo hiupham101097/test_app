@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:merchant/commons/views/custom_empty.dart';
 import 'package:merchant/constants/asset_constants.dart';
 import 'package:merchant/style/app_colors.dart';

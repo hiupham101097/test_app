@@ -63,4 +63,6 @@ abstract class Routes {
   static const walletDiscount = '/walletDiscount';
   static const register = '/register';
   static const infoStore = '/infoStore';
+  static const createVoucher = '/createVoucher';
+  static const voucherDiscount = '/voucherDiscount';
 }

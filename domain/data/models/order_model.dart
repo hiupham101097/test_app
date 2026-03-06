@@ -1,8 +1,6 @@
 import 'package:get/get.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../commons/types/status_oder_enum.dart';
-
 part 'order_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)

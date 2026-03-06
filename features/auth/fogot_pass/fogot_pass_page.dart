@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:merchant/commons/views/app_button.dart';
 import 'package:merchant/commons/views/app_text_field.dart';
-import 'package:merchant/commons/views/custom_app_bar.dart';
 import 'package:merchant/commons/views/custom_screen.dart';
 import 'package:merchant/style/app_colors.dart';
 import 'package:merchant/style/app_text_style.dart';
