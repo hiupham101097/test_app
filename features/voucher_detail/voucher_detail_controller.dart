@@ -69,9 +69,7 @@ class VoucherDetailController extends GetxController {
                 title: "${"participated".tr} ${voucherDetail.value.name}",
                 button: "close".tr,
                 action: () {
-                  if (Get.isDialogOpen == true) {
-                    Navigator.of(Get.overlayContext!).pop();
-                  }
+                    Get.back();
                 },
                 isShowCancel: false,
               );

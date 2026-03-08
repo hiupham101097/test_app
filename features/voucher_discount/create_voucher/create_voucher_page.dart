@@ -11,16 +11,23 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScreen(
-      backgroundColor: AppColors.backgroundColor24,
-      title: controller.isUpdate ? "Cập nhật mã giảm giá" : "Thêm mới mã giảm giá",
-      child: _buildBody(),
-      bottomNavigationBar: _buildBottomButton(),
+    // TỐI ƯU: Bọc toàn bộ màn hình bằng GestureDetector để bắt sự kiện chạm ra ngoài
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: CustomScreen(
+        backgroundColor: AppColors.backgroundColor24,
+        title: controller.isUpdate ? "Cập nhật mã giảm giá" : "Thêm mới mã giảm giá",
+        bottomNavigationBar: _buildBottomButton(),
+        child: _buildBody(),
+      ),
     );
   }
 
   Widget _buildBody() {
     return SingleChildScrollView(
+      // TỐI ƯU: Tự động đóng bàn phím khi người dùng bắt đầu cuộn trang (UX chuẩn)
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Column(
         children: [
@@ -39,9 +46,7 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
-
           _buildSection(
             title: "Thời gian và số lượng",
             children: [
@@ -65,9 +70,7 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
-
           _buildSection(
             title: "Trạng thái",
             children: [
@@ -81,7 +84,6 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
         ],
       ),
@@ -165,10 +167,14 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
           : "Chọn ngày";
 
       return InkWell(
-        onTap: () => controller.pickDate(type),
+        onTap: () {
+          // TỐI ƯU: Đóng bàn phím trước khi mở Picker để tránh chồng chéo giao diện
+          FocusManager.instance.primaryFocus?.unfocus();
+          controller.pickDate(type);
+        },
         child: InputDecorator(
           decoration: _inputDecoration(label).copyWith(
-            suffixIcon: const Icon(Icons.calendar_today),
+            suffixIcon: const Icon(Icons.calendar_today, size: 20),
           ),
           child: Text(
             text,
@@ -191,6 +197,8 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide.none,
       ),
+      // Giúp label không bị che khuất khi có giá trị
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
     );
   }
 
@@ -198,10 +206,12 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
     return Padding(
       padding: EdgeInsets.all(16.r),
       child: SizedBox(
+        width: double.infinity, // Đảm bảo nút full width
         height: 52.h,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryColor,
+            elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14.r),
             ),
