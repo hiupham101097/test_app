@@ -17,7 +17,10 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
       behavior: HitTestBehavior.opaque,
       child: CustomScreen(
         backgroundColor: AppColors.backgroundColor24,
-        title: controller.isUpdate ? "Cập nhật mã giảm giá" : "Thêm mới mã giảm giá",
+        title:
+            controller.isUpdate
+                ? "Cập nhật mã giảm giá"
+                : "Thêm mới mã giảm giá",
         bottomNavigationBar: _buildBottomButton(),
         child: _buildBody(),
       ),
@@ -112,8 +115,9 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
         children: [
           Text(
             title,
-            style: AppTextStyles.semibold14()
-                .copyWith(color: AppColors.grayscaleColor80),
+            style: AppTextStyles.semibold14().copyWith(
+              color: AppColors.grayscaleColor80,
+            ),
           ),
           SizedBox(height: 14.h),
           ...children,
@@ -158,13 +162,13 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
 
   Widget _buildDateField(String label, VoucherDateType type) {
     return Obx(() {
-      final date = type == VoucherDateType.start
-          ? controller.startDate.value
-          : controller.expiryDate.value;
+      final date =
+          type == VoucherDateType.start
+              ? controller.startDate.value
+              : controller.expiryDate.value;
 
-      final text = date != null
-          ? "${date.day}/${date.month}/${date.year}"
-          : "Chọn ngày";
+      final text =
+          date != null ? "${date.day}/${date.month}/${date.year}" : "Chọn ngày";
 
       return InkWell(
         onTap: () {
@@ -173,13 +177,10 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
           controller.pickDate(type);
         },
         child: InputDecorator(
-          decoration: _inputDecoration(label).copyWith(
-            suffixIcon: const Icon(Icons.calendar_today, size: 20),
-          ),
-          child: Text(
-            text,
-            style: AppTextStyles.regular14(),
-          ),
+          decoration: _inputDecoration(
+            label,
+          ).copyWith(suffixIcon: const Icon(Icons.calendar_today, size: 20)),
+          child: Text(text, style: AppTextStyles.regular14()),
         ),
       );
     });
@@ -188,8 +189,9 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: AppTextStyles.regular12()
-          .copyWith(color: AppColors.grayscaleColor60),
+      labelStyle: AppTextStyles.regular12().copyWith(
+        color: AppColors.grayscaleColor60,
+      ),
       filled: true,
       fillColor: Colors.grey.shade50,
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
@@ -205,22 +207,61 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
   Widget _buildBottomButton() {
     return Padding(
       padding: EdgeInsets.all(16.r),
-      child: SizedBox(
-        width: double.infinity, // Đảm bảo nút full width
-        height: 52.h,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryColor,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14.r),
-            ),
+      child:
+          controller.isUpdate
+              ? Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: 52.h,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: AppColors.warningColor,
+                          ), 
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                        ),
+                        onPressed:
+                            controller 
+                                .actionDelete, // Bạn cần thêm hàm onDelete vào controller
+                        child: Text(
+                          "delete".tr,
+                          style: AppTextStyles.semibold14().copyWith(
+                            color: AppColors.warningColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  // Nút Cập nhật
+                  Expanded(flex: 2, child: _buildMainButton("update".tr)),
+                ],
+              )
+              : _buildMainButton("create_voucher".tr),
+    );
+  }
+
+  // Tách riêng nút chính để tái sử dụng
+  Widget _buildMainButton(String label) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52.h,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primaryColor,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14.r),
           ),
-          onPressed: controller.onSubmit,
-          child: Text(
-            controller.isUpdate ? "Cập nhật" : "Tạo voucher",
-            style: AppTextStyles.semibold14().copyWith(color: Colors.white),
-          ),
+        ),
+        onPressed: controller.onSubmit,
+        child: Text(
+          label,
+          style: AppTextStyles.semibold14().copyWith(color: Colors.white),
         ),
       ),
     );

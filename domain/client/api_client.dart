@@ -777,29 +777,26 @@ class ApiClient extends BaseClient {
     int? page = 1,
     String? storeId,
   }) async {
-    final query = <String, dynamic>{};
+    final params = <String, String>{};
 
-    if (limit != null) {
-      query['pageSize'] = limit;
-    }
-
-    if (page != null) {
-      query['pageCurrent'] = page;
-    }
+    if (limit != null) params['pageSize'] = limit.toString();
+    if (page != null) params['pageCurrent'] = page.toString();
 
     if (storeId != null) {
-      query['sortList'] = jsonEncode([
+      final sortJson = jsonEncode([
         {
           "key": "storeId",
-          "value": [storeId, null],
+          "value": [storeId],
         },
       ]);
+
+      params['sortList'] = Uri.encodeComponent(sortJson);
     }
 
-    return client.get(
-      '$apiHostPartner/api/v1/mobile/public/vouchers',
-      queryParameters: query,
-    );
+    final query = params.entries.map((e) => '${e.key}=${e.value}').join('&');
+    final url = '$apiHostPartner/api/v1/mobile/public/vouchers?$query';
+
+    return client.get(url);
   }
 
   Future<Response> deleteVoucherDiscount({required String id}) async {

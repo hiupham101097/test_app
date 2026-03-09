@@ -5,6 +5,7 @@ import 'package:merchant/domain/client/api_client.dart';
 import 'package:merchant/domain/client/event_service.dart';
 import 'package:merchant/domain/data/models/voucher_discount_model.dart';
 import 'package:merchant/domain/database/store_db.dart';
+import 'package:merchant/style/app_colors.dart';
 import 'package:merchant/utils/dialog_util.dart';
 import 'package:merchant/utils/error_util.dart';
 import 'package:merchant/domain/data/models/store_model.dart';
@@ -117,23 +118,63 @@ class CreateVoucherController extends GetxController {
     EasyLoading.dismiss();
   }
 
-  String generateVoucherCode({String prefix = "DISC"}) {
-  final now = DateTime.now();
+  void actionDelete() {
+    DialogUtil.showConfirmDialog(
+      Get.context!,
+      image: null,
+      title: "delete_voucher".tr,
+      titleColor: AppColors.grayscaleColor80,
+      description: "are_you_sure_you_want_to_delete_this_voucher".tr,
+      button: "delete_voucher".tr,
+      action: () {
+        onDeleteVoucher();
+      },
+      isShowCancel: true,
+    );
+  }
 
-  final hour = now.hour.toString().padLeft(2, '0');
-  final minute = now.minute.toString().padLeft(2, '0');
-  final second = now.second.toString().padLeft(2, '0');
-
-  final timePart = "$hour$minute$second";
-
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  final rand = List.generate(
-    4,
-    (index) => chars[(chars.length * (DateTime.now().microsecondsSinceEpoch + index) % chars.length)],
-  ).join();
-
-  return "$prefix-$timePart-$rand";
+  Future<void> onDeleteVoucher() async {
+  try {
+    EasyLoading.show();
+    final response = await client.deleteVoucherDiscount(id: voucher!.id!);
+    final isSuccess = response.statusCode == 204 || response.statusCode == 20;
+    if (isSuccess) {
+      eventBus.fire(DeleteVoucherDiscountEvent());
+      EasyLoading.dismiss(); 
+      DialogUtil.showSuccessMessage("delete_voucher_discount_success".tr);
+      Get.back(); 
+    } else {
+      EasyLoading.dismiss();
+      String msg = response.data?["message"] ?? "Có lỗi xảy ra";
+      DialogUtil.showErrorMessage(msg);
+    }
+  } catch (error, trace) {
+    EasyLoading.dismiss();
+    ErrorUtil.catchError(error, trace);
+  }
 }
+
+  String generateVoucherCode({String prefix = "DISC"}) {
+    final now = DateTime.now();
+
+    final hour = now.hour.toString().padLeft(2, '0');
+    final minute = now.minute.toString().padLeft(2, '0');
+    final second = now.second.toString().padLeft(2, '0');
+
+    final timePart = "$hour$minute$second";
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final rand =
+        List.generate(
+          4,
+          (index) =>
+              chars[(chars.length *
+                  (DateTime.now().microsecondsSinceEpoch + index) %
+                  chars.length)],
+        ).join();
+
+    return "$prefix-$timePart-$rand";
+  }
 
   bool _validate() {
     if (nameController.text.isEmpty) {

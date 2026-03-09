@@ -55,7 +55,7 @@ class VoucherDiscountPage extends GetView<VoucherDiscountController> {
         ),
         child: Row(
           children: [
-            _buildLeftIcon(),
+            _buildLeftIcon(voucher),
             SizedBox(width: 14.w),
 
             /// TEXT
@@ -89,14 +89,17 @@ class VoucherDiscountPage extends GetView<VoucherDiscountController> {
     );
   }
 
-  Widget _buildLeftIcon() {
+  Widget _buildLeftIcon(VoucherDiscountModel voucher) {
     return Container(
       width: 70.w,
       height: 70.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
-        gradient: const LinearGradient(
-          colors: [Color(0xff7C6CF2), Color(0xff3F2BFF)],
+        gradient: LinearGradient(
+          colors: [
+            safeColor(voucher.color?.medium, const Color(0xffB0AAF3)),
+            safeColor(voucher.color?.wild, const Color(0xff3624FF)),
+          ],
         ),
       ),
       child: Column(
@@ -128,5 +131,16 @@ class VoucherDiscountPage extends GetView<VoucherDiscountController> {
     );
 
     return "${expiryDate.day}/${expiryDate.month}/${expiryDate.year}";
+  }
+
+  Color safeColor(String? hex, Color fallback) {
+    if (hex == null || hex.isEmpty) return fallback;
+    try {
+      var hexColor = hex.replaceAll('#', '');
+      if (hexColor.length == 6) hexColor = 'FF$hexColor';
+      return Color(int.parse(hexColor, radix: 16));
+    } catch (_) {
+      return fallback;
+    }
   }
 }

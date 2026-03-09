@@ -24,6 +24,7 @@ class VoucherDiscountController extends GetxController {
 
   late StreamSubscription createSub;
   late StreamSubscription updateSub;
+  late StreamSubscription deleteSub;
 
   @override
   void onInit() {
@@ -38,12 +39,17 @@ class VoucherDiscountController extends GetxController {
     updateSub = eventBus.on<UpdateVoucherDiscountEvent>().listen((event) {
       fetchData();
     });
+
+    deleteSub = eventBus.on<DeleteVoucherDiscountEvent>().listen((event) {
+      fetchData();
+    });
   }
 
   @override
   void onClose() {
     createSub.cancel();
     updateSub.cancel();
+    deleteSub.cancel();
     super.onClose();
   }
 
@@ -99,29 +105,5 @@ class VoucherDiscountController extends GetxController {
         Get.put(CreateVoucherController());
       }),
     );
-  }
-
-  /// ==========================
-  /// DELETE
-  /// ==========================
-
-  Future<void> deleteVoucher(String id) async {
-    try {
-      EasyLoading.show();
-
-      final response = await client.deleteVoucherDiscount(id: id);
-
-      if (response.data["resultApi"]["status"] == 200) {
-        DialogUtil.showSuccessMessage("Xóa voucher thành công");
-
-        fetchData();
-      } else {
-        DialogUtil.showErrorMessage("Xóa voucher thất bại");
-      }
-    } catch (error, trace) {
-      ErrorUtil.catchError(error, trace);
-    } finally {
-      EasyLoading.dismiss();
-    }
   }
 }

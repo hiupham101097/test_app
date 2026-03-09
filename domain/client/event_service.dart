@@ -37,3 +37,5 @@ class UpdateStoreEvent {}
 class CreateVoucherDiscountEvent {}
 
 class UpdateVoucherDiscountEvent {}
+
+class DeleteVoucherDiscountEvent {}
