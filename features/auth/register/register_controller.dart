@@ -41,7 +41,7 @@ class RegisterController extends GetxController {
     passwordController.addListener(_validateForm);
     confirmPasswordController.addListener(_validateForm);
     emailController.addListener(_validateForm);
-    referralCodeController.addListener(_validateForm);
+    // referralCodeController.addListener(_validateForm);
     ever(isAgree, (value) {
       _validateForm();
     });
@@ -56,13 +56,12 @@ class RegisterController extends GetxController {
     final confirmPasswordValid =
         confirmPasswordController.text.trim().isNotEmpty;
     final emailValid = emailController.text.trim().isNotEmpty;
-    final referralCodeValid = referralCodeController.text.trim().isNotEmpty;
+    // final referralCodeValid = referralCodeController.text.trim().isNotEmpty;
     isFormValid.value =
         phoneValid &&
         passwordValid &&
         confirmPasswordValid &&
         emailValid &&
-        referralCodeValid &&
         isAgree.value;
   }
 
@@ -140,12 +139,12 @@ class RegisterController extends GetxController {
           .then((response) async {
             EasyLoading.dismiss();
             if (response.statusCode == 200) {
-              if (response.data['resultApi']['data']['status'] == true) {
+              if (response.data['resultApi']['user']['id'] != null) {
                 singInConfirm();
               } else {
                 onAction();
               }
-            }
+            }                                                                                              
           })
           .catchError((error, trace) {
             EasyLoading.dismiss();
