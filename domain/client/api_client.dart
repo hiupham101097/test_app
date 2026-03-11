@@ -55,6 +55,7 @@ class ApiClient extends BaseClient {
     return client.post(
       '$apiHostPartner/api/v1/mobile/stores/storeRegister',
       data: formData,
+      extraHeaders: <String, dynamic>{},
     );
   }
 

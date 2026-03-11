@@ -418,6 +418,7 @@ class InfoStoreController extends GetxController {
             }
           })
           .catchError((error, trace) {
+            print(error);
             EasyLoading.dismiss();
             ErrorUtil.catchError(error, trace);
           });

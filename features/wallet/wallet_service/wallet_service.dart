@@ -64,8 +64,17 @@ class WalletService {
         .getByPhone(headers: headers, phone: phone)
         .then((response) async {
           if (response.statusCode == 200) {
-            final data = jsonDecode(response.data['resultApi']['payload']);
-            if (data != null) {
+            final resultApi = response.data['resultApi'];
+
+            if (resultApi != null) {
+              Map<String, dynamic> data;
+
+              if (resultApi is String) {
+                data = jsonDecode(resultApi);
+              } else {
+                data = Map<String, dynamic>.from(resultApi);
+              }
+
               final wallet = WalletModel.fromJson(data);
               await WalletDB().save(wallet);
             } else {
@@ -117,7 +126,7 @@ class WalletService {
     final base64Encrypted = SecurityUtil.encryptAES(
       payload,
       DateTime.parse(time).millisecondsSinceEpoch,
-      AppConstants.securityKey,
+      AppConstants.securityKeyDev,
     );
     await apiClient
         .createWallet(headers: headers, data: base64Encrypted)

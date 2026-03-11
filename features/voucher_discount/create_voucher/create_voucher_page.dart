@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:merchant/commons/views/custom_screen.dart';
 import 'package:merchant/features/voucher_discount/create_voucher/create_voucher_controller.dart';
 import 'package:merchant/style/app_colors.dart';
@@ -157,6 +159,26 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
       controller: controllerField,
       keyboardType: TextInputType.number,
       decoration: _inputDecoration(label),
+      inputFormatters: [
+        // 1. Chỉ cho phép nhập số
+        FilteringTextInputFormatter.digitsOnly,
+        // 2. Định dạng trực tiếp
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          if (newValue.text.isEmpty) return newValue;
+
+          // Loại bỏ dấu phẩy cũ để lấy giá trị số nguyên
+          final intValue = int.tryParse(newValue.text.replaceAll(',', ''));
+          if (intValue == null) return oldValue;
+
+          // Định dạng lại số
+          final newText = NumberFormat("#,###").format(intValue);
+
+          return TextEditingValue(
+            text: newText,
+            selection: TextSelection.collapsed(offset: newText.length),
+          );
+        }),
+      ],
     );
   }
 
@@ -217,15 +239,13 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
                       height: 52.h,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppColors.warningColor,
-                          ), 
+                          side: const BorderSide(color: AppColors.warningColor),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14.r),
                           ),
                         ),
                         onPressed:
-                            controller 
+                            controller
                                 .actionDelete, // Bạn cần thêm hàm onDelete vào controller
                         child: Text(
                           "delete".tr,
