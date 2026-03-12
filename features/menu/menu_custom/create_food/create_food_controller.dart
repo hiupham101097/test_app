@@ -151,8 +151,16 @@ class CreateFoodController extends GetxController {
     );
 
     final store = StoreDB().currentStore();
+
+    final storeId = store?.id ?? '';
+    final storeSlug = store?.slug ?? '';
+    final productSlug = AppUtil.generateSlug(name);
+
     final folderPath =
-        'store/${store?.id ?? ""}/product/${AppUtil.generateSlug(name)}-${store?.slug ?? ""}';
+        'store/$storeId/product/$productSlug-$storeId';
+
+    // final folderPath =
+    //     'store/${store?.id ?? ""}/product/${AppUtil.generateSlug(name)}-${store?.slug ?? ""}';
     final formData = dio.FormData.fromMap({
       'file': image,
       'folderPath': folderPath,

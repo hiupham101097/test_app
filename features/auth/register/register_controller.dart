@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:merchant/commons/types/method_enum.dart';
 import 'package:merchant/commons/views/app_button.dart';
-import 'package:merchant/di_container.dart';
-import 'package:merchant/domain/client/local_client.dart';
 import 'package:merchant/features/auth/otp/otp_controller.dart';
 import 'package:merchant/features/auth/reset_password/widget/bottomsheet_method_send.dart';
 import 'package:merchant/style/app_colors.dart';

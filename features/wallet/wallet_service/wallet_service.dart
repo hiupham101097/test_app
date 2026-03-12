@@ -19,14 +19,14 @@ class WalletService {
   ApiClient apiClient = ApiClient();
   Future<Map<String, String>> buildWalletHeaders() async {
     final serverTimestamp = await getRealTime();
-    final String securityKey = AppConstants.securityKey;
-    final String clientId = AppConstants.clientID;
+    // final String securityKey = AppConstants.securityKey;
+    // final String clientId = AppConstants.clientID;
 
-    // final String securityKey = AppConstants.securityKeyDev;
-    // final String clientId = AppConstants.clientIDDev;
+    final String securityKey = AppConstants.securityKeyDev;
+    final String clientId = AppConstants.clientIDDev;
     final publicKeyPem = await rootBundle.loadString(
-      "assets/private_key/key-wallet.pem",
-      // "assets/private_key/key-wallet_dev.pem",
+      // "assets/private_key/key-wallet.pem",
+      "assets/private_key/key-wallet_dev.pem",
     );
 
     final timestampMs = DateTime.parse(serverTimestamp).millisecondsSinceEpoch;
@@ -64,19 +64,14 @@ class WalletService {
         .getByPhone(headers: headers, phone: phone)
         .then((response) async {
           if (response.statusCode == 200) {
-            final resultApi = response.data['resultApi'];
-
-            if (resultApi != null) {
-              Map<String, dynamic> data;
-
-              if (resultApi is String) {
-                data = jsonDecode(resultApi);
+            if (response.data['resultApi'] != null) {
+              final data = jsonDecode(response.data['resultApi']['payload']);
+              if (data != null) {
+                final wallet = WalletModel.fromJson(data);
+                await WalletDB().save(wallet);
               } else {
-                data = Map<String, dynamic>.from(resultApi);
+                await createWallet(store);
               }
-
-              final wallet = WalletModel.fromJson(data);
-              await WalletDB().save(wallet);
             } else {
               await createWallet(store);
             }

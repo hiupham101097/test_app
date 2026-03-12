@@ -24,11 +24,14 @@ class VoucherItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var checkSlug =
-        promotion.slug == 'quan-an-noi-bat' ||
-                promotion.slug == 'deal-chop-nhoang'
-            ? true
-            : false;
+    const highlightSlugs = {
+      'quan-an-noi-bat',
+      'deal-chop-nhoang',
+      'deals-chop-nhoang',
+      'bach-hoa-noi-bat',
+    };
+
+    final checkSlug = highlightSlugs.contains(promotion.slug);
     return CustomPaint(
       painter: TicketBorderPainter(),
       child: ClipPath(

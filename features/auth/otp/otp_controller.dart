@@ -112,7 +112,9 @@ class OtpController extends GetxController {
             );
             sl<LocalClient>().setEmail(email.value);
             sl<LocalClient>().setPhone(key.value);
-            sl<LocalClient>().setAccessToken(response.data["resultApi"]["token"]);
+            sl<LocalClient>().setAccessToken(
+              response.data["resultApi"]['token'],
+            );
             final user = UserModel.fromJson(
               response.data["resultApi"]['user'] as Map<String, dynamic>,
             );

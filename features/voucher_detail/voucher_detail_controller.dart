@@ -57,11 +57,14 @@ class VoucherDetailController extends GetxController {
             DialogUtil.showSuccessMessage("join_voucher_success".tr);
             await getDetailVoucher();
 
-            var checkSlug =
-                voucherDetail.value.slug == 'quan-an-noi-bat' ||
-                        voucherDetail.value.slug == 'deal-chop-nhoang'
-                    ? true
-                    : false;
+            const highlightSlugs = {
+              'quan-an-noi-bat',
+              'deal-chop-nhoang',
+              'deals-chop-nhoang',
+              'bach-hoa-noi-bat',
+            };
+
+            final checkSlug = highlightSlugs.contains(voucherDetail.value.slug);
             if (checkSlug) {
               DialogUtil.showConfirmDialog(
                 Get.context!,
@@ -69,7 +72,7 @@ class VoucherDetailController extends GetxController {
                 title: "${"participated".tr} ${voucherDetail.value.name}",
                 button: "close".tr,
                 action: () {
-                    Get.back();
+                  Get.back();
                 },
                 isShowCancel: false,
               );
