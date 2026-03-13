@@ -20,16 +20,30 @@ class CreateVoucherController extends GetxController {
   final store = StoreModel().obs;
   VoucherDiscountModel? voucher;
   final _moneyFormat = NumberFormat("#,###");
+  final _dateFormat = DateFormat('dd/MM/yyyy');
 
   /// TEXT CONTROLLERS
+  final typeController = TextEditingController();
+  final codeController = TextEditingController();
   final nameController = TextEditingController();
   final discountController = TextEditingController();
   final usageCountController = TextEditingController();
   final usagePerUserController = TextEditingController();
   final minOrderController = TextEditingController();
+  final systemController = TextEditingController();
+  final startDateController = TextEditingController();
+  final expiryDateController = TextEditingController();
   final TextEditingController categoryNameController = TextEditingController();
 
-  final systemController = TextEditingController();
+  final typeFocusNode = FocusNode();
+  final codeFocusNode = FocusNode();
+  final nameFocusNode = FocusNode();
+  final discountFocusNode = FocusNode();
+  final usageCountFocusNode = FocusNode();
+  final usagePerFocusNode = FocusNode();
+  final minOrderFocusNode = FocusNode();
+  final startDateFocusNode = FocusNode();
+  final expiryDateFocusNode = FocusNode();
   final systemFocusNode = FocusNode();
 
   /// DATE
@@ -58,6 +72,8 @@ class CreateVoucherController extends GetxController {
 
     voucher = Get.arguments?["voucher"];
     store.value = StoreDB().currentStore() ?? StoreModel();
+    typeController.text = "Giảm giá";
+    codeController.text = "DISC-";
     if (voucher != null) {
       _fillData();
     }
@@ -72,28 +88,31 @@ class CreateVoucherController extends GetxController {
   }
 
   void _fillData() {
+    typeController.text = "Giảm giá";
+    codeController.text = "DISC-";
     nameController.text = voucher?.name ?? "";
     discountController.text = "${voucher?.discountAmount ?? 0}";
     usageCountController.text = "${voucher?.usageCount ?? 0}";
     usagePerUserController.text = "${voucher?.usagePerUser ?? 1}";
     minOrderController.text = "${voucher?.minOrderValue ?? 0}";
 
-    startDate.value = voucher?.startDate;
+    startDate.value = voucher!.startDate;
+    expiryDate.value = voucher!.endDate!;
 
-    if (voucher?.startDate != null && voucher?.usageCount != null) {
-      expiryDate.value = voucher!.startDate!.add(
-        Duration(days: voucher!.usageCount!),
-      );
+    if (voucher!.startDate != null) {
+      startDateController.text = _dateFormat.format(voucher!.startDate!);
     }
 
-    /// ===== GÁN SYSTEM KHI UPDATE =====
+    if (voucher!.endDate != null) {
+      expiryDateController.text = _dateFormat.format(voucher!.endDate!);
+    }
+
+    /// SYSTEM
     if (store.value.system.length > 1) {
       final voucherSystem = voucher?.system;
 
       if (voucherSystem != null && voucherSystem.isNotEmpty) {
         system.value = voucherSystem;
-
-        /// hiển thị text
         systemController.text = gettitleSystem(voucherSystem);
       }
     }
@@ -117,8 +136,8 @@ class CreateVoucherController extends GetxController {
       "name": nameController.text,
       "code": generateVoucherCode(),
       "type": type,
-      "startDate": startDate.value!.toUtc().toIso8601String(),
-      "expiryDate": expiryDate.value!.toUtc().toIso8601String(),
+      "startDate": startDate.value!.toIso8601String(),
+      "expiryDate": expiryDate.value!.toIso8601String(),
       "usageCount":
           int.tryParse(usageCountController.text.replaceAll(",", "")) ?? 0,
       "usagePerUser":
@@ -249,8 +268,10 @@ class CreateVoucherController extends GetxController {
     if (picked != null) {
       if (type == VoucherDateType.start) {
         startDate.value = picked;
+        startDateController.text = _dateFormat.format(picked);
       } else {
         expiryDate.value = picked;
+        expiryDateController.text = _dateFormat.format(picked);
       }
     }
   }

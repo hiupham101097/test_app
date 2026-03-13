@@ -168,7 +168,7 @@ class RegisterController extends GetxController {
                 'otpType': OtpType.register,
                 'email': emailController.text,
                 'password': passwordController.text,
-                'introduceCode ': referralCodeController.text,
+                'introduceCode': referralCodeController.text,
               },
             );
           }

@@ -16,6 +16,10 @@ VoucherDiscountModel _$VoucherDiscountModelFromJson(
       json['startDate'] != null
           ? DateTime.parse(json['startDate'] as String)
           : null,
+  endDate:
+      json['endDate'] != null
+          ? DateTime.parse(json['endDate'] as String)
+          : null,
   usageCount: json['usageCount'] as int? ?? 0,
   usedCount: json['usedCount'] as int? ?? 0,
   usagePerUser: json['usagePerUser'] as int? ?? 0,
@@ -38,6 +42,7 @@ Map<String, dynamic> _$VoucherDiscountModelToJson(
   'name': instance.name,
   'type': instance.type,
   'startDate': instance.startDate?.toIso8601String(),
+  'endDate': instance.endDate?.toIso8601String(),
   'usageCount': instance.usageCount,
   'usedCount': instance.usedCount,
   'usagePerUser': instance.usagePerUser,

@@ -12,7 +12,6 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
 
   @override
   Widget build(BuildContext context) {
-    // TỐI ƯU: Bọc toàn bộ màn hình bằng GestureDetector để bắt sự kiện chạm ra ngoài
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       behavior: HitTestBehavior.opaque,
@@ -30,7 +29,6 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
 
   Widget _buildBody() {
     return SingleChildScrollView(
-      // TỐI ƯU: Tự động đóng bàn phím khi người dùng bắt đầu cuộn trang (UX chuẩn)
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Column(
@@ -47,6 +45,7 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
               _buildNumberField(
                 label: "Giảm giá",
                 controllerField: controller.discountController,
+                focusNode: controller.discountFocusNode,
               ),
             ],
           ),
@@ -54,27 +53,54 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
           _buildSection(
             title: "Thời gian và số lượng",
             children: [
-              _buildDateField("Ngày bắt đầu", VoucherDateType.start),
+              _buildDateField(
+                "Ngày bắt đầu",
+                VoucherDateType.start,
+                controller.startDateController,
+                controller.startDateFocusNode,
+              ),
               SizedBox(height: 14.h),
-              _buildDateField("Ngày kết thúc", VoucherDateType.expiry),
+              _buildDateField(
+                "Ngày kết thúc",
+                VoucherDateType.expiry,
+                controller.expiryDateController,
+                controller.expiryDateFocusNode,
+              ),
               SizedBox(height: 14.h),
               _buildNumberField(
                 label: "Số lượng voucher",
                 controllerField: controller.usageCountController,
+                focusNode: controller.usageCountFocusNode,
               ),
               SizedBox(height: 14.h),
               _buildNumberField(
                 label: "Sử dụng mỗi người",
                 controllerField: controller.usagePerUserController,
+                focusNode: controller.usagePerFocusNode,
               ),
               SizedBox(height: 14.h),
               _buildNumberField(
                 label: "Giá đơn hàng tối thiểu",
                 controllerField: controller.minOrderController,
+                focusNode: controller.minOrderFocusNode,
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          Obx(() {
+            if (controller.store.value.system.isNotEmpty &&
+                controller.store.value.system.length == 2) {
+              return _buildSection(
+                title: "Lĩnh vực hoạt động",
+                children: [
+                  Column(
+                    children: [SizedBox(height: 14.h), _buildSystemField()],
+                  ),
+                  SizedBox(height: 14.h),
+                ],
+              );
+            }
+            return const SizedBox();
+          }),
           _buildSection(
             title: "Trạng thái",
             children: [
@@ -88,17 +114,6 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
-
-          Obx(() {
-            if (controller.store.value.system.isNotEmpty &&
-                controller.store.value.system.length == 2) {
-              return Column(
-                children: [SizedBox(height: 14.h), _buildSystemField()],
-              );
-            }
-            return const SizedBox();
-          }),
         ],
       ),
     );
@@ -138,81 +153,84 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
   }
 
   Widget _buildVoucherType() {
-    return TextFormField(
-      initialValue: "Giảm giá",
-      enabled: false,
-      decoration: _inputDecoration("Loại giảm giá"),
+    return TitleDefaultTextField(
+      focusNode: controller.typeFocusNode,
+      controller: controller.typeController,
+      title: "Loại giảm giá",
+      hintText: "",
+      enable: true,
+      readOnly: true,
+      required: false,
+      suffix: Icon(
+        Icons.keyboard_arrow_down_sharp,
+        color: AppColors.grayscaleColor80,
+      ),
     );
   }
 
   Widget _buildVoucherCode() {
-    return TextFormField(
-      initialValue: controller.code,
-      enabled: false,
-      decoration: _inputDecoration("Mã voucher"),
+    return TitleDefaultTextField(
+      focusNode: controller.codeFocusNode,
+      controller: controller.codeController,
+      title: "Mã voucher",
+      hintText: "",
+      enable: true,
+      readOnly: true,
+      required: false,
     );
   }
 
   Widget _buildVoucherName() {
-    return TextFormField(
+    return TitleDefaultTextField(
+      focusNode: controller.nameFocusNode,
       controller: controller.nameController,
-      decoration: _inputDecoration("Tên voucher"),
+      title: "Tên voucher",
+      hintText: "Nhập tên voucher",
     );
   }
 
   Widget _buildNumberField({
     required String label,
     required TextEditingController controllerField,
+    FocusNode? focusNode,
   }) {
-    return TextFormField(
+    return TitleDefaultTextField(
+      focusNode: focusNode!,
       controller: controllerField,
-      keyboardType: TextInputType.number,
-      decoration: _inputDecoration(label),
+      title: label,
+      hintText: "Nhập $label",
+      textInputType: TextInputType.number,
     );
   }
 
-  Widget _buildDateField(String label, VoucherDateType type) {
+  Widget _buildDateField(
+    String label,
+    VoucherDateType type,
+    TextEditingController controllerField,
+    FocusNode? focusNode,
+  ) {
     return Obx(() {
       final date =
           type == VoucherDateType.start
               ? controller.startDate.value
               : controller.expiryDate.value;
 
-      final text =
-          date != null ? "${date.day}/${date.month}/${date.year}" : "Chọn ngày";
+      controllerField.text =
+          date != null ? "${date.day}/${date.month}/${date.year}" : "";
 
-      return InkWell(
-        onTap: () {
-          // TỐI ƯU: Đóng bàn phím trước khi mở Picker để tránh chồng chéo giao diện
+      return TitleDefaultTextField(
+        focusNode: focusNode!,
+        controller: controllerField,
+        title: label,
+        hintText: "Chọn ngày",
+        readOnly: true,
+        onTab: () {
           FocusManager.instance.primaryFocus?.unfocus();
           controller.pickDate(type);
         },
-        child: InputDecorator(
-          decoration: _inputDecoration(
-            label,
-          ).copyWith(suffixIcon: const Icon(Icons.calendar_today, size: 20)),
-          child: Text(text, style: AppTextStyles.regular14()),
-        ),
+        suffix: const Icon(Icons.calendar_today, size: 20),
       );
     });
-  }
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: AppTextStyles.regular12().copyWith(
-        color: AppColors.grayscaleColor60,
-      ),
-      filled: true,
-      fillColor: Colors.grey.shade50,
-      contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide.none,
-      ),
-      // Giúp label không bị che khuất khi có giá trị
-      floatingLabelBehavior: FloatingLabelBehavior.auto,
-    );
   }
 
   Widget _buildBottomButton() {
@@ -233,9 +251,7 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
                             borderRadius: BorderRadius.circular(14.r),
                           ),
                         ),
-                        onPressed:
-                            controller
-                                .actionDelete, // Bạn cần thêm hàm onDelete vào controller
+                        onPressed: controller.actionDelete,
                         child: Text(
                           "delete".tr,
                           style: AppTextStyles.semibold14().copyWith(
@@ -246,7 +262,6 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
                     ),
                   ),
                   SizedBox(width: 12.w),
-                  // Nút Cập nhật
                   Expanded(flex: 2, child: _buildMainButton("update".tr)),
                 ],
               )
@@ -254,7 +269,6 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
     );
   }
 
-  // Tách riêng nút chính để tái sử dụng
   Widget _buildMainButton(String label) {
     return SizedBox(
       width: double.infinity,

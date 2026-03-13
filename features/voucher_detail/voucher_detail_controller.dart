@@ -4,6 +4,8 @@ import 'package:merchant/domain/client/api_client.dart';
 import 'package:get/get.dart';
 import 'package:merchant/domain/client/event_service.dart';
 import 'package:merchant/domain/data/models/promotion_model.dart';
+import 'package:merchant/domain/data/models/store_model.dart';
+import 'package:merchant/domain/database/store_db.dart';
 import 'package:merchant/navigations/app_pages.dart';
 import 'package:merchant/utils/dialog_util.dart';
 import 'package:merchant/utils/error_util.dart';
@@ -14,11 +16,14 @@ class VoucherDetailController extends GetxController {
   final ApiClient client = ApiClient();
   final idVoucher = 0.obs;
   final voucherDetail = PromotionModel().obs;
+  final store = StoreModel().obs;
   @override
   void onInit() {
     if (Get.arguments != null && Get.arguments['idVoucher'] != null) {
       idVoucher.value = Get.arguments['idVoucher'];
     }
+    store.value = StoreDB().currentStore() ?? StoreModel();
+
     getDetailVoucher();
     super.onInit();
   }
@@ -48,6 +53,7 @@ class VoucherDetailController extends GetxController {
       "listPromotionIds": [
         {"id": idVoucher.value},
       ],
+      "system": store.value.system[0]
     };
     client
         .joinVoucher(data: data)

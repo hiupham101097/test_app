@@ -46,7 +46,7 @@ class OtpController extends GetxController {
       if (Get.arguments['password'] != null) {
         password.value = Get.arguments['password'];
       }
-      if(Get.arguments['introduceCode'] != null) {
+      if (Get.arguments['introduceCode'] != null) {
         introduceCode.value = Get.arguments['introduceCode'];
       }
     }
@@ -104,16 +104,20 @@ class OtpController extends GetxController {
       "password": password.value,
       "emailAddress": email.value,
       "channel": channel.value,
-      "introduceCode": introduceCode.value,
     };
     client
         .registerUser(data)
         .then((response) async {
           EasyLoading.dismiss();
           if (response.statusCode == 200) {
+            var introCode = introduceCode.value;
             Get.offAllNamed(
               Routes.infoStore,
-              arguments: {'phone': key.value, 'email': email.value},
+              arguments: {
+                'phone': key.value,
+                'email': email.value,
+                "introduceCode": introCode,
+              },
             );
             sl<LocalClient>().setEmail(email.value);
             sl<LocalClient>().setPhone(key.value);

@@ -17,6 +17,9 @@ class VoucherDiscountModel extends BaseModel {
   @JsonKey(name: 'startDate')
   final DateTime? startDate;
 
+  @JsonKey(name: 'endDate')
+  final DateTime? endDate;
+
   @JsonKey(name: 'usageCount')
   final int? usageCount;
 
@@ -52,6 +55,7 @@ class VoucherDiscountModel extends BaseModel {
     this.name,
     this.type,
     this.startDate,
+    this.endDate,
     this.usageCount,
     this.usedCount,
     this.usagePerUser,
@@ -79,10 +83,7 @@ class VoucherColorModel {
   @JsonKey(name: 'medium')
   final String? medium;
 
-  VoucherColorModel({
-    this.wild,
-    this.medium,
-  });
+  VoucherColorModel({this.wild, this.medium});
 
   factory VoucherColorModel.fromJson(Map<String, dynamic> json) =>
       _$VoucherColorModelFromJson(json);

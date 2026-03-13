@@ -9,7 +9,6 @@ import 'package:merchant/domain/database/store_db.dart';
 import 'package:merchant/features/voucher_discount/create_voucher/create_voucher_controller.dart';
 import 'package:merchant/features/voucher_discount/create_voucher/create_voucher_page.dart';
 import 'package:merchant/navigations/app_pages.dart';
-import 'package:merchant/utils/dialog_util.dart';
 import 'package:merchant/utils/error_util.dart';
 import 'package:merchant/domain/data/models/store_model.dart';
 
@@ -62,7 +61,9 @@ class VoucherDiscountController extends GetxController {
       loading.value = true;
       EasyLoading.show();
 
-      final response = await client.fetchListVoucherDiscount(storeId: store.value.id);
+      final response = await client.fetchListVoucherDiscount(
+        storeId: store.value.id,
+      );
 
       final data = response.data["resultApi"];
 

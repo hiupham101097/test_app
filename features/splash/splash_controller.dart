@@ -134,6 +134,7 @@ class SplashController extends GetxController
         arguments: {
           'phone': sl<LocalClient>().phone,
           'email': sl<LocalClient>().email,
+          'introduceCode': sl<LocalClient>().introduceCode
         },
       );
     }

@@ -122,15 +122,9 @@ class VoucherDiscountPage extends GetView<VoucherDiscountController> {
   }
 
   String _getExpiryDate(VoucherDiscountModel voucher) {
-    if (voucher.startDate == null || voucher.usageCount == null) {
-      return "";
-    }
+    final expiryDate = voucher.endDate;
 
-    final expiryDate = voucher.startDate!.add(
-      Duration(days: voucher.usageCount!),
-    );
-
-    return "${expiryDate.day}/${expiryDate.month}/${expiryDate.year}";
+    return "${expiryDate!.day}/${expiryDate.month}/${expiryDate.year}";
   }
 
   Color safeColor(String? hex, Color fallback) {

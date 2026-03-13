@@ -31,6 +31,7 @@ class RegisterStoreRequest {
     this.status,
     this.storeSystemCategory,
     this.system,
+    this.introduceCode,
   });
 
   final String? id;
@@ -60,6 +61,7 @@ class RegisterStoreRequest {
   final String? status;
   final List<Map<String, dynamic>>? storeSystemCategory;
   final List<String>? system;
+  final String? introduceCode;
   Map<String, dynamic> toJson() {
     return {
       "id": id,
@@ -87,6 +89,7 @@ class RegisterStoreRequest {
       "status": status,
       "storeSystemCategory": storeSystemCategory,
       "system": system,
+      "introduceCode": introduceCode,
     }..removeWhere((k, v) => v == null || v.toString().isEmpty);
   }
 
@@ -116,6 +119,7 @@ class RegisterStoreRequest {
       'closeTime': closeTime,
       'taxCode': taxCode,
       'status': status,
+      'introduceCode': introduceCode,
     }..removeWhere((_, v) => v == null || v.isEmpty);
 
     textFields.forEach((key, value) {

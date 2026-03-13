@@ -65,6 +65,19 @@ class LocalClient {
     sharedPreference.remove("phone");
   }
 
+  void setintroduceCode(String value) {
+    sharedPreference.setString("introduceCode", value);
+  }
+
+  String get introduceCode {
+    return sharedPreference.getString("introduceCode") ?? "";
+  }
+
+  void clearintroduceCode() {
+    sharedPreference.remove("introduceCode");
+  }
+
+
   void setAmountSetting(String value) {
     sharedPreference.setString("amountSetting", value);
   }

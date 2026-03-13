@@ -38,6 +38,7 @@ class InfoStoreController extends GetxController {
   final password = ''.obs;
   final validate = false.obs;
   final uuid = ''.obs;
+  final introduceCode = ''.obs;
   final store = StoreModel().obs;
   //step 1
   final nameFocusNode = FocusNode();
@@ -135,9 +136,12 @@ class InfoStoreController extends GetxController {
       if (Get.arguments['password'] != null) {
         password.value = Get.arguments['password'];
       }
+      if (Get.arguments['introduceCode'] != null) {
+        introduceCode.value = Get.arguments['introduceCode'];
+      } 
     }
 
-    initData();
+     initData();
   }
 
   void initData() {
@@ -373,6 +377,7 @@ class InfoStoreController extends GetxController {
       storeSystemCategory:
           selectedCategorySestym.value.map((e) => {"id": e.id ?? ""}).toList(),
       system: [(indexSelectedField.value + 1).toString()],
+      introduceCode: introduceCode.value,
     );
     print("request: ${request.toJson()}");
     final formData = await request.toFormData();
