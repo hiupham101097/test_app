@@ -25,6 +25,7 @@ class OtpController extends GetxController {
   final otpType = OtpType.register.obs;
   final email = ''.obs;
   final password = ''.obs;
+  final introduceCode = ''.obs;
 
   @override
   void onInit() {
@@ -44,6 +45,9 @@ class OtpController extends GetxController {
       }
       if (Get.arguments['password'] != null) {
         password.value = Get.arguments['password'];
+      }
+      if(Get.arguments['introduceCode'] != null) {
+        introduceCode.value = Get.arguments['introduceCode'];
       }
     }
     startTimer();
@@ -100,6 +104,7 @@ class OtpController extends GetxController {
       "password": password.value,
       "emailAddress": email.value,
       "channel": channel.value,
+      "introduceCode": introduceCode.value,
     };
     client
         .registerUser(data)

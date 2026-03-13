@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:merchant/commons/views/app_text_field.dart';
 import 'package:merchant/commons/views/custom_screen.dart';
 import 'package:merchant/features/voucher_discount/create_voucher/create_voucher_controller.dart';
 import 'package:merchant/style/app_colors.dart';
@@ -88,6 +89,16 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
             ],
           ),
           SizedBox(height: 20.h),
+
+          Obx(() {
+            if (controller.store.value.system.isNotEmpty &&
+                controller.store.value.system.length == 2) {
+              return Column(
+                children: [SizedBox(height: 14.h), _buildSystemField()],
+              );
+            }
+            return const SizedBox();
+          }),
         ],
       ),
     );
@@ -217,15 +228,13 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
                       height: 52.h,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppColors.warningColor,
-                          ), 
+                          side: const BorderSide(color: AppColors.warningColor),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14.r),
                           ),
                         ),
                         onPressed:
-                            controller 
+                            controller
                                 .actionDelete, // Bạn cần thêm hàm onDelete vào controller
                         child: Text(
                           "delete".tr,
@@ -263,6 +272,25 @@ class CreateVoucherPage extends GetView<CreateVoucherController> {
           label,
           style: AppTextStyles.semibold14().copyWith(color: Colors.white),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSystemField() {
+    return TitleDefaultTextField(
+      focusNode: controller.systemFocusNode,
+      controller: controller.systemController,
+      title: "Lĩnh vực hoạt động".tr,
+      hintText: "Chọn lĩnh vực hoạt động".tr,
+      readOnly: true,
+      onTab: () {
+        if (controller.listSystem.length > 1) {
+          controller.showBottomSheetSystem();
+        }
+      },
+      suffix: Icon(
+        Icons.keyboard_arrow_down_sharp,
+        color: AppColors.grayscaleColor80,
       ),
     );
   }

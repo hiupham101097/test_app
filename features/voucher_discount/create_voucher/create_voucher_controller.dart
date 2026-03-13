@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:merchant/commons/views/bottomsheet_custom_widget.dart';
 import 'package:merchant/domain/client/api_client.dart';
 import 'package:merchant/domain/client/event_service.dart';
+import 'package:merchant/domain/data/models/category_sestym_model.dart';
 import 'package:merchant/domain/data/models/voucher_discount_model.dart';
 import 'package:merchant/domain/database/store_db.dart';
 import 'package:merchant/style/app_colors.dart';
@@ -16,6 +19,7 @@ class CreateVoucherController extends GetxController {
   final ApiClient client = ApiClient();
   final store = StoreModel().obs;
   VoucherDiscountModel? voucher;
+  final _moneyFormat = NumberFormat("#,###");
 
   /// TEXT CONTROLLERS
   final nameController = TextEditingController();
@@ -23,20 +27,29 @@ class CreateVoucherController extends GetxController {
   final usageCountController = TextEditingController();
   final usagePerUserController = TextEditingController();
   final minOrderController = TextEditingController();
+  final TextEditingController categoryNameController = TextEditingController();
+
+  final systemController = TextEditingController();
+  final systemFocusNode = FocusNode();
 
   /// DATE
   final startDate = Rxn<DateTime>();
   final expiryDate = Rxn<DateTime>();
 
+  final listCategorySestym = <CategorySestymModel>[].obs;
+  final selectedCategorySestym = Rx<CategorySestymModel?>(null);
+
   /// STATUS
   final isActive = true.obs;
+  final listSystem = <String>[].obs;
+  final system = Rx<String?>(null);
 
   /// CONSTANT
   final String code = "DISC-";
   final String type = "discount";
   final bool isShow = true;
-  final String system = "1";
 
+  final isValidate = false.obs;
   bool get isUpdate => voucher != null;
 
   @override
@@ -48,6 +61,14 @@ class CreateVoucherController extends GetxController {
     if (voucher != null) {
       _fillData();
     }
+    listSystem.value = StoreDB().getSystem();
+
+    formatNumber(discountController);
+    formatNumber(usageCountController);
+    formatNumber(usagePerUserController);
+    formatNumber(minOrderController);
+
+    ever(selectedCategorySestym, (_) => checkValid());
   }
 
   void _fillData() {
@@ -64,6 +85,27 @@ class CreateVoucherController extends GetxController {
         Duration(days: voucher!.usageCount!),
       );
     }
+
+    /// ===== GÁN SYSTEM KHI UPDATE =====
+    if (store.value.system.length > 1) {
+      final voucherSystem = voucher?.system;
+
+      if (voucherSystem != null && voucherSystem.isNotEmpty) {
+        system.value = voucherSystem;
+
+        /// hiển thị text
+        systemController.text = gettitleSystem(voucherSystem);
+      }
+    }
+  }
+
+  void checkValid() {
+    if (categoryNameController.text.isNotEmpty &&
+        selectedCategorySestym.value != null) {
+      isValidate.value = true;
+    } else {
+      isValidate.value = false;
+    }
   }
 
   Future<void> onSubmit() async {
@@ -77,13 +119,19 @@ class CreateVoucherController extends GetxController {
       "type": type,
       "startDate": startDate.value!.toUtc().toIso8601String(),
       "expiryDate": expiryDate.value!.toUtc().toIso8601String(),
-      "usageCount": int.tryParse(usageCountController.text) ?? 0,
-      "usagePerUser": int.tryParse(usagePerUserController.text) ?? 1,
-      "minOrderValue": int.tryParse(minOrderController.text) ?? 0,
-      "discountAmount": int.tryParse(discountController.text) ?? 0,
+      "usageCount":
+          int.tryParse(usageCountController.text.replaceAll(",", "")) ?? 0,
+      "usagePerUser":
+          int.tryParse(usagePerUserController.text.replaceAll(",", "")) ?? 1,
+      "minOrderValue":
+          int.tryParse(minOrderController.text.replaceAll(",", "")) ?? 0,
+      "discountAmount":
+          int.tryParse(discountController.text.replaceAll(",", "")) ?? 0,
       "status": isActive.value ? "active" : "inactive",
       "isShow": isShow,
-      "system": store.value.system.isNotEmpty ? store.value.system[0] : ["1"],
+      "system":
+          system.value ??
+          (store.value.system.isNotEmpty ? store.value.system[0] : ["1"]),
     };
 
     try {
@@ -134,25 +182,25 @@ class CreateVoucherController extends GetxController {
   }
 
   Future<void> onDeleteVoucher() async {
-  try {
-    EasyLoading.show();
-    final response = await client.deleteVoucherDiscount(id: voucher!.id!);
-    final isSuccess = response.statusCode == 204 || response.statusCode == 20;
-    if (isSuccess) {
-      eventBus.fire(DeleteVoucherDiscountEvent());
-      EasyLoading.dismiss(); 
-      DialogUtil.showSuccessMessage("delete_voucher_discount_success".tr);
-      Get.back(); 
-    } else {
+    try {
+      EasyLoading.show();
+      final response = await client.deleteVoucherDiscount(id: voucher!.id!);
+      final isSuccess = response.statusCode == 204 || response.statusCode == 20;
+      if (isSuccess) {
+        eventBus.fire(DeleteVoucherDiscountEvent());
+        EasyLoading.dismiss();
+        DialogUtil.showSuccessMessage("delete_voucher_discount_success".tr);
+        Get.back();
+      } else {
+        EasyLoading.dismiss();
+        String msg = response.data?["message"] ?? "Có lỗi xảy ra";
+        DialogUtil.showErrorMessage(msg);
+      }
+    } catch (error, trace) {
       EasyLoading.dismiss();
-      String msg = response.data?["message"] ?? "Có lỗi xảy ra";
-      DialogUtil.showErrorMessage(msg);
+      ErrorUtil.catchError(error, trace);
     }
-  } catch (error, trace) {
-    EasyLoading.dismiss();
-    ErrorUtil.catchError(error, trace);
   }
-}
 
   String generateVoucherCode({String prefix = "DISC"}) {
     final now = DateTime.now();
@@ -209,5 +257,57 @@ class CreateVoucherController extends GetxController {
 
   void onChangeStatus(bool value) {
     isActive.value = value;
+  }
+
+  void showBottomSheetSystem() {
+    Get.bottomSheet(
+      BottomsheetCustomWidget(
+        title: "Lĩnh vực hoạt động".tr,
+        dataCustom:
+            listSystem.map((e) => gettitleSystem(e)).toList().reversed.toList(),
+        onTap: (index) {
+          systemController.text = gettitleSystem(
+            listSystem.reversed.toList()[index],
+          );
+          system.value = listSystem.reversed.toList()[index];
+          listCategorySestym.clear();
+          selectedCategorySestym.value = null;
+        },
+        selectedItem: gettitleSystem(system.value ?? ""),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  String gettitleSystem(String system) {
+    switch (system) {
+      case "1":
+        return "Quán ăn";
+      case "2":
+        return "Bách hoá";
+      default:
+        return "";
+    }
+  }
+
+  void formatNumber(TextEditingController controller) {
+    controller.addListener(() {
+      String text = controller.text.replaceAll(",", "");
+
+      if (text.isEmpty) return;
+
+      final number = int.tryParse(text);
+      if (number == null) return;
+
+      final newText = _moneyFormat.format(number);
+
+      if (controller.text != newText) {
+        controller.value = TextEditingValue(
+          text: newText,
+          selection: TextSelection.collapsed(offset: newText.length),
+        );
+      }
+    });
   }
 }
