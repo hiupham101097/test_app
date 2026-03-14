@@ -19,14 +19,14 @@ class WalletService {
   ApiClient apiClient = ApiClient();
   Future<Map<String, String>> buildWalletHeaders() async {
     final serverTimestamp = await getRealTime();
-    // final String securityKey = AppConstants.securityKey;
-    // final String clientId = AppConstants.clientID;
+    final String securityKey = AppConstants.securityKey;
+    final String clientId = AppConstants.clientID;
 
-    final String securityKey = AppConstants.securityKeyDev;
-    final String clientId = AppConstants.clientIDDev;
+    // final String securityKey = AppConstants.securityKeyDev;
+    // final String clientId = AppConstants.clientIDDev;
     final publicKeyPem = await rootBundle.loadString(
-      // "assets/private_key/key-wallet.pem",
-      "assets/private_key/key-wallet_dev.pem",
+      "assets/private_key/key-wallet.pem",
+      // "assets/private_key/key-wallet_dev.pem",
     );
 
     final timestampMs = DateTime.parse(serverTimestamp).millisecondsSinceEpoch;
@@ -121,7 +121,7 @@ class WalletService {
     final base64Encrypted = SecurityUtil.encryptAES(
       payload,
       DateTime.parse(time).millisecondsSinceEpoch,
-      AppConstants.securityKeyDev,
+      AppConstants.securityKey,
     );
     await apiClient
         .createWallet(headers: headers, data: base64Encrypted)

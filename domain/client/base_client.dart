@@ -7,16 +7,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class BaseClient {
-  static const _apiHostOrder = 'https://devorder.chothongminh.com';
-  static const _apiHostWallet = 'https://dev-wallet.bigcode.vn';
-  static const _apiHostSso = 'https://devsso.chothongminh.com';
-  static const _apiHostPartner = 'https://devpartner.chothongminh.com';
-  static const _apiHostContent = 'https://devcontent.chothongminh.com';
-  // static const _apiHostOrder = 'https://order-api.chothongminh.com';
-  // static const _apiHostWallet = 'https://wallet-api.gober.vn';
-  // static const _apiHostSso = 'https://sso-api.chothongminh.com';
-  // static const _apiHostPartner = 'https://partner-api.chothongminh.com';
-  // static const _apiHostContent = 'https://content-api.chothongminh.com';
+  // static const _apiHostOrder = 'https://devorder.chothongminh.com';
+  // static const _apiHostWallet = 'https://dev-wallet.bigcode.vn';
+  // static const _apiHostSso = 'https://devsso.chothongminh.com';
+  // static const _apiHostPartner = 'https://devpartner.chothongminh.com';
+  // static const _apiHostContent = 'https://devcontent.chothongminh.com';
+  static const _apiHostOrder = 'https://order-api.chothongminh.com';
+  static const _apiHostWallet = 'https://wallet-api.gober.vn';
+  static const _apiHostSso = 'https://sso-api.chothongminh.com';
+  static const _apiHostPartner = 'https://partner-api.chothongminh.com';
+  static const _apiHostContent = 'https://content-api.chothongminh.com';
   static BaseClient? _instance;
   Dio? _dio;
 
