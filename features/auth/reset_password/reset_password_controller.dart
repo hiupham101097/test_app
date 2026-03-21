@@ -105,7 +105,7 @@ class ResetPasswordController extends GetxController {
           .then((response) async {
             EasyLoading.dismiss();
             if (response.statusCode == 200) {
-              if (response.data['resultApi']['data']['status'] == false) {
+              if (response.data['resultApi']['user'] == null) {
                 confirmResetPassword();
               } else {
                 onAction();

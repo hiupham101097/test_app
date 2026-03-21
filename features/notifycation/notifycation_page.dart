@@ -81,10 +81,16 @@ class NotifycationPage extends GetView<NotifycationController> {
   Widget _buildItem(NotifiModel item) {
     return GestureDetector(
       onTap: () {
+        // Get.toNamed(
+        //   Routes.notifycationDetail,
+        //   arguments: {'notification': item},
+        // );
         Get.toNamed(
-          Routes.notifycationDetail,
-          arguments: {'notification': item},
+          Routes.oderDetail,
+          arguments: {'orderId': item.payload!.orderId},
         );
+
+        controller.updateReadNotification(item);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 12.w),

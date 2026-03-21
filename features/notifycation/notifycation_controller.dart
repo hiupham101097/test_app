@@ -100,4 +100,19 @@ class NotifycationController extends GetxController {
           ErrorUtil.catchError(error, trace);
         });
   }
+
+  Future<void> updateReadNotification(NotifiModel item) async {
+    final data = {"expireAt": DateTime.now().toIso8601String(), "isRead": true};
+    await client
+        .fetchDetailNotification(
+          notificationId: item.notificationId ?? "",
+          data: data,
+        )
+        .then((response) {
+          eventBus.fire(NotificationEvent());
+        })
+        .catchError((error, trace) {
+          ErrorUtil.catchError(error, trace);
+        });
+  }
 }
